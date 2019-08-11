@@ -6,3 +6,7 @@
 #### 7就是图片框起来的地方
 ### @Events:  goPage  参数  目标页
 ## 使用方式<Pager :curPage="curPage" :totalPage="totalPage"  @goPage="goP"></Pager>
+
+# el-select多选--Vue组件
+![github](https://raw.githubusercontent.com/lwjmzla/Pagination/master/img-storage/demo1.png "github")
+## 使用方式<elselect-multiple ref="elSelMul" :sourceData="sourceData" :checked="[]" sourcePlaceholder="城市多选" :sourceWidth="300" :defaultProps="defaultProps" :vals.sync="xxx"></elselect-multiple>
