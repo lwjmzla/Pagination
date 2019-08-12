@@ -37,7 +37,7 @@
         type: Array,
         default: () => []
       },
-      checked: { // !里面保存的是id
+      checked: { // !默认选中哪些,里面保存的是id
         type: Array,
         default: () => []
       },
@@ -68,14 +68,7 @@
       };
     },
     mounted() {
-      if (this.checked.length) {
-        // this.checkedData = [{ id: 1, name: '广州11111111' }]; // !这种是无效的
-        this.checkedData = this.sourceData.filter((item) => this.checked.includes(item[this.defaultProps.id])); // !checkedData要和 sourceData关联才有效。
-        let checkedCount = this.checked.length;
-        this.checkAll = checkedCount === this.sourceData.length;
-        this.isIndeterminate = checkedCount > 0 && checkedCount < this.sourceData.length;
-        this.doAfterChange();
-      }
+      this.isCheckedToDo();
     },
     methods: {
       handleCheckAllChange(val) {
@@ -101,6 +94,17 @@
         this.strs = '';
         this.isIndeterminate = false;
         this.checkedData = [];
+        this.isCheckedToDo();
+      },
+      isCheckedToDo() {
+        if (this.checked.length) {
+          // this.checkedData = [{ id: 1, name: '广州11111111' }]; // !这种是无效的
+          this.checkedData = this.sourceData.filter((item) => this.checked.includes(item[this.defaultProps.id])); // !checkedData要和 sourceData关联才有效。
+          let checkedCount = this.checked.length;
+          this.checkAll = checkedCount === this.sourceData.length;
+          this.isIndeterminate = checkedCount > 0 && checkedCount < this.sourceData.length;
+          this.doAfterChange();
+        }
       }
     }
     
