@@ -22,7 +22,6 @@
 <script>
 /*
   sourceData 必传
-  checked 选传 数组，里面是id
   sourcePlaceholder
   sourceWidth
   defaultProps 选传 作用:配置选项
@@ -37,14 +36,18 @@
       event: 'modelChange' // ! modelChange 其实是自定义的，this.$emit('modelChange', this.checkedData); 就会改父组件的值
     },
     props: {
+      vals: { // !父组件v-model传进来的值
+        type: Array,
+        default: () => []
+      },
       sourceData: {
         type: Array,
         default: () => []
       },
-      checked: { // !默认选中哪些,里面保存的是id
-        type: Array,
-        default: () => []
-      },
+      // checked: { // !默认选中哪些,里面保存的是id
+      //   type: Array,
+      //   default: () => []
+      // },
       sourcePlaceholder: {
         type: String,
         default: '请多选'
@@ -73,6 +76,7 @@
     },
     mounted() {
       this.$emit('modelChange', this.checkedData);
+      this.checked = this.vals.map((item) => item[this.defaultProps.id]); //! 里面保存的是id
       this.isCheckedToDo();
     },
     methods: {
@@ -106,6 +110,7 @@
         if (this.checked.length) {
           // this.checkedData = [{ id: 1, name: '广州11111111' }]; // !这种是无效的
           this.checkedData = this.sourceData.filter((item) => this.checked.includes(item[this.defaultProps.id])); // !checkedData要和 sourceData关联才有效。
+
           let checkedCount = this.checked.length;
           this.checkAll = checkedCount === this.sourceData.length;
           this.isIndeterminate = checkedCount > 0 && checkedCount < this.sourceData.length;

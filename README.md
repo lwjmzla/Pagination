@@ -11,4 +11,4 @@
 ![github](https://raw.githubusercontent.com/lwjmzla/Pagination/master/img-storage/demo1.png "github")
 ## 使用方式<elselect-multiple ref="elSelMul" :sourceData="sourceData" :checked="[]" sourcePlaceholder="城市多选" :sourceWidth="300"                       ## :defaultProps="defaultProps" :vals.sync="xxx"></elselect-multiple>
 ## v-model方式
-### <elselect-multiple ref="elSelMul" :sourceData="sourceData" :checked="[1]" sourcePlaceholder="城市多选" :sourceWidth="300" ### :defaultProps="defaultProps" v-model="displayForm.cityVals"></elselect-multiple>
+### <elselect-multiple ref="elSelMul" :sourceData="sourceData" sourcePlaceholder="城市多选" :sourceWidth="300" ### :defaultProps="defaultProps" v-model="displayForm.cityVals"></elselect-multiple>
