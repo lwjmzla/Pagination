@@ -1,13 +1,16 @@
 <template>
   <div class="elselect_multiple">
-    <el-select v-popover:popover v-model="strs" :placeholder="sourcePlaceholder" popper-class="select_con_hide" v-tooltip="strs"></el-select>
+    <el-select v-popover:popover v-model="strs" :clearable="clearable" :placeholder="placeholder" popper-class="select_con_hide" v-tooltip="strs"></el-select>
     <el-popover placement="bottom-start" ref="popover" :width="sourceWidth" trigger="click" popper-class="elselect_multiple_popover">
       <div class="elselect_multiple_popover_wrap" v-if="sourceData.length">
-        <div class="check_all">
+        <div class="check_filter" v-if="filterable">
+          <el-input v-model="filterText" placeholder="请输入" clearable></el-input>
+        </div>
+        <div class="check_all" v-show="showCheckAllDiv">
           <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
         </div>
         <el-checkbox-group v-model="checkedData" @change="handleCheckedDataChange" class="">
-          <div class="check_item" v-for="item in sourceData" :key="item[defaultProps.id]">
+          <div class="check_item" v-for="item in Options" :key="item[defaultProps.id]">
             <el-checkbox :label="item">{{ item[defaultProps.name] }}</el-checkbox>
           </div>
         </el-checkbox-group>
@@ -22,7 +25,7 @@
 <script>
 /*
   sourceData 必传
-  sourcePlaceholder
+  placeholder
   sourceWidth
   defaultProps 选传 作用:配置选项
   eg: defaultProps: {
@@ -48,7 +51,7 @@
       //   type: Array,
       //   default: () => []
       // },
-      sourcePlaceholder: {
+      placeholder: {
         type: String,
         default: '请多选'
       },
@@ -64,6 +67,14 @@
             name: 'name'
           };
         }
+      },
+      clearable: {
+        type: Boolean,
+        default: true
+      },
+      filterable: {
+        type: Boolean,
+        default: true
       }
     },
     data() {
@@ -71,13 +82,49 @@
         strs: '',
         checkAll: false,
         checkedData: [],
-        isIndeterminate: false
+        isIndeterminate: false,
+        filterText: '',
+        Options: this.sourceData,
+        showCheckAllDiv: true,
+        initVals: []
       };
     },
+    watch: {
+      strs(newVal) {
+        if (!newVal) {
+          this.isIndeterminate = false;
+          this.checkedData = [];
+          this.checkAll = false;
+          this.$emit('modelChange', this.checkedData);
+        }
+      },
+      filterText(newVal) {
+        if (newVal) {
+          this.showCheckAllDiv = false;
+          this.Options = this.sourceData.filter((item) => item[this.defaultProps.name].includes(newVal));
+        } else {
+          this.showCheckAllDiv = true;
+          this.Options = this.sourceData;
+        }
+      },
+      sourceData: {
+        handler(newVal) {
+          // 如果值 异常可以 考虑加个定时器
+          if (this.vals.length) {
+            this.initVals = this.vals.slice();
+          }
+          if (newVal.length) {
+            this.Options = newVal;
+            // this.checked = this.initVals.map((item) => item[this.defaultProps.id]); //! 里面保存的是id
+            this.checked = this.initVals;
+            this.isCheckedToDo();
+          }
+        },
+        immediate: true
+      }
+    },
     mounted() {
-      this.$emit('modelChange', this.checkedData);
-      this.checked = this.vals.map((item) => item[this.defaultProps.id]); //! 里面保存的是id
-      this.isCheckedToDo();
+      // this.$emit('modelChange', this.checkedData);
     },
     methods: {
       handleCheckAllChange(val) {
@@ -102,8 +149,6 @@
       },
       resetDatas() {
         this.strs = '';
-        this.isIndeterminate = false;
-        this.checkedData = [];
         this.isCheckedToDo();
       },
       isCheckedToDo() {
@@ -131,5 +176,8 @@
   }
   .none{text-align: center;padding: 5px 0;}
   .elselect_multiple_popover_wrap{max-height: 238px;overflow: auto;}
+  .check_filter {
+    padding: 5px;
+  }
 }
 </style>
