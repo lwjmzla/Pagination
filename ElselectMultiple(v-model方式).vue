@@ -86,7 +86,8 @@
         filterText: '',
         Options: this.sourceData,
         showCheckAllDiv: true,
-        initVals: []
+        initVals: [],
+        checked: [] // !选中的id
       };
     },
     watch: {
@@ -95,7 +96,7 @@
           this.isIndeterminate = false;
           this.checkedData = [];
           this.checkAll = false;
-          this.$emit('modelChange', this.checkedData);
+          this.$emit('modelChange', []);
         }
       },
       filterText(newVal) {
@@ -109,32 +110,39 @@
       },
       sourceData: {
         handler(newVal) {
-          // 如果值 异常可以 考虑加个定时器
-          if (this.vals.length) {
-            this.initVals = this.vals.slice();
-          }
           if (newVal.length) {
             this.Options = newVal;
-            // this.checked = this.initVals.map((item) => item[this.defaultProps.id]); //! 里面保存的是id
-            this.checked = this.initVals;
-            this.isCheckedToDo();
+            this.setCheckedStatus();
           }
         },
         immediate: true
+      },
+      vals: {
+        // !重点一：使用this.$refs.form.resetFields();时 会传 默认值/初始值进来的  ["1169141089018175489"]
+        handler(newVal) {
+          console.log(newVal);
+          this.checked = newVal;
+          if (this.sourceData.length) {
+            this.setCheckedStatus();
+          }
+        },
+        immediate: true,
+        deep: true
       }
     },
     mounted() {
-      // this.$emit('modelChange', this.checkedData);
     },
     methods: {
       handleCheckAllChange(val) {
         console.log(val); // type: Boolean
         this.checkedData = val ? this.sourceData : [];
         this.isIndeterminate = false;
+        this.checked = this.checkedData.map(item => item[this.defaultProps.id]);
         this.doAfterChange();
       },
       handleCheckedDataChange(value) {
         this.checkedData = value;
+        this.checked = this.checkedData.map(item => item[this.defaultProps.id]);
         this.doAfterChange();
         console.log(value);
         let checkedCount = value.length;
@@ -142,25 +150,21 @@
         this.isIndeterminate = checkedCount > 0 && checkedCount < this.sourceData.length;
       },
       doAfterChange() {
-        // this.$emit('update:vals', this.checkedData);
-        this.$emit('modelChange', this.checkedData);
+        this.$emit('modelChange', this.checked); // !改外面 v-model的值，即vals
         let checkedDataNameArr = this.checkedData.map((item) => item[this.defaultProps.name]);
         this.strs = checkedDataNameArr.join('/');
       },
-      resetDatas() {
-        this.strs = '';
-        this.isCheckedToDo();
-      },
-      isCheckedToDo() {
-        if (this.checked.length) {
-          // this.checkedData = [{ id: 1, name: '广州11111111' }]; // !这种是无效的
-          this.checkedData = this.sourceData.filter((item) => this.checked.includes(item[this.defaultProps.id])); // !checkedData要和 sourceData关联才有效。
-
-          let checkedCount = this.checked.length;
-          this.checkAll = checkedCount === this.sourceData.length;
-          this.isIndeterminate = checkedCount > 0 && checkedCount < this.sourceData.length;
-          this.doAfterChange();
-        }
+      // resetDatas() {
+      //   this.strs = '';
+      //   this.isCheckedToDo();
+      // },
+      setCheckedStatus() {
+        let checkedCount = this.checked.length;
+        this.checkAll = checkedCount === this.sourceData.length;
+        this.isIndeterminate = checkedCount > 0 && checkedCount < this.sourceData.length;
+        this.checkedData = this.sourceData.filter(item => this.checked.includes(item[this.defaultProps.id])); // !根据外面传入的值让checkbox选中
+        let checkedDataNameArr = this.checkedData.map((item) => item[this.defaultProps.name]);
+        this.strs = checkedDataNameArr.join('/');
       }
     }
     
