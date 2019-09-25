@@ -151,8 +151,8 @@
       },
       doAfterChange() {
         this.$emit('modelChange', this.checked); // !改外面 v-model的值，即vals
-        let checkedDataNameArr = this.checkedData.map((item) => item[this.defaultProps.name]);
-        this.strs = checkedDataNameArr.join('/');
+        // let checkedDataNameArr = this.checkedData.map((item) => item[this.defaultProps.name]); // !CheckedStatus  会在 this.$emit('modelChange', this.checked) 后
+        // this.strs = checkedDataNameArr.join('/');
       },
       // resetDatas() {
       //   this.strs = '';
