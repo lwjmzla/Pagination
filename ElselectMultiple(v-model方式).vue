@@ -136,7 +136,7 @@
       handleCheckAllChange(val) {
         console.log(val); // type: Boolean
         this.checkedData = val ? this.sourceData : [];
-        this.isIndeterminate = false;
+        // this.isIndeterminate = false;  // !CheckedStatus  会在 this.$emit('modelChange', this.checked) 后，vals传进来的时候执行setCheckedStatus
         this.checked = this.checkedData.map(item => item[this.defaultProps.id]);
         this.doAfterChange();
       },
@@ -145,9 +145,9 @@
         this.checked = this.checkedData.map(item => item[this.defaultProps.id]);
         this.doAfterChange();
         console.log(value);
-        let checkedCount = value.length;
-        this.checkAll = checkedCount === this.sourceData.length;
-        this.isIndeterminate = checkedCount > 0 && checkedCount < this.sourceData.length;
+        // let checkedCount = value.length; // !CheckedStatus  会在 this.$emit('modelChange', this.checked) 后，vals传进来的时候执行setCheckedStatus
+        // this.checkAll = checkedCount === this.sourceData.length;
+        // this.isIndeterminate = checkedCount > 0 && checkedCount < this.sourceData.length;
       },
       doAfterChange() {
         this.$emit('modelChange', this.checked); // !改外面 v-model的值，即vals
